@@ -1,15 +1,14 @@
-import * as React from 'react';
+import * as React from "react";
+import { IPoint } from "../../models/Point";
 
-export interface PointProps {
-  id: number;
-  name: string;
+export interface IPointProps extends IPoint {
 }
 
-export default class Point extends React.Component<PointProps, any> {
+export default class Point extends React.Component<IPointProps, any> {
 
-  constructor(props: PointProps) {
+  constructor(props: IPointProps) {
     super(props);
-    this.state = {id: props.id};
+    this.state = { id: props.id };
   }
 
   render() {
