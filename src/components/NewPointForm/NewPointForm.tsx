@@ -1,12 +1,26 @@
 import * as React from "react";
+import { Point, IPoint } from "../../models/Point";
 
-export default class NewPointForm extends React.Component {
+interface INewPointForm {
+  onPointAdded?: (newPoint: IPoint) => any;
+}
+
+export default class NewPointForm extends React.Component<INewPointForm> {
+
+  submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const nameElement: HTMLInputElement = e.currentTarget.elements.namedItem("name") as HTMLInputElement;
+    const name = nameElement ? nameElement.value : "";
+
+    this.props.onPointAdded && this.props.onPointAdded(new Point(name));
+  }
 
   render() {
     return (
-      <div className="new-point-form">
-        <input type="text" className="new-point-form__input" />
-      </div>
+      <form className="new-point-form" onSubmit={this.submitForm}>
+        <input type="text" name="name" className="new-point-form__input" placeholder="Новая точка" />
+      </form>
     );
   }
 }
