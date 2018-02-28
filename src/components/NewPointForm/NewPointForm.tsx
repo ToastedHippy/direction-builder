@@ -13,6 +13,7 @@ export default class NewPointForm extends React.Component<INewPointForm> {
     const nameElement: HTMLInputElement = e.currentTarget.elements.namedItem("name") as HTMLInputElement;
     const name = nameElement ? nameElement.value : "";
 
+    e.currentTarget.reset();
     this.props.onPointAdded && this.props.onPointAdded(new Point(name));
   }
 

@@ -2,9 +2,13 @@ import * as React from "react";
 import { } from "@types/googlemaps";
 import { IPoint } from "../../models/Point";
 
-export interface IMarkerProps extends IPoint {
-    map: google.maps.Map;
-    position?: google.maps.LatLng;
+export interface IMarkerProps {
+  name: string;
+  map: google.maps.Map | null;
+  position?: google.maps.LatLng;
+  onMarkerCreated?: (coordinate: google.maps.LatLng) => any;
+  onMarkerMoved?: (coordinate: google.maps.LatLng) => any;
+  onMarkerDeleted?: () => any;
 }
 
 interface IMarkerState {
@@ -15,7 +19,7 @@ export default class Marker extends React.Component<IMarkerProps, IMarkerState> 
 
   constructor(props: IMarkerProps) {
     super(props);
-    this.state = {marker: null};
+    this.state = { marker: null };
     console.log("construct", this.props);
   }
 
@@ -24,12 +28,17 @@ export default class Marker extends React.Component<IMarkerProps, IMarkerState> 
     if (map) {
       const markerProps: google.maps.MarkerOptions = {
         map,
-        position: this.props.position || {lat: -25.363, lng: 131.044},
+        position: this.props.position || { lat: -25.363, lng: 131.044 },
         draggable: true,
         title: this.props.name || "",
       };
       const marker = new google.maps.Marker(markerProps);
-      this.setState({marker});
+
+      marker.addListener("dragend",
+        () => this.props.onMarkerMoved && this.props.onMarkerMoved(marker.getPosition()));
+
+      this.setState({ marker });
+      this.props.onMarkerCreated && this.props.onMarkerCreated(marker.getPosition());
     }
   }
 
@@ -39,7 +48,11 @@ export default class Marker extends React.Component<IMarkerProps, IMarkerState> 
 
   componentDidUpdate(prevProps: IMarkerProps) {
     if (this.props.map !== prevProps.map) {
-      this.createGMMarker();
+      if (this.state.marker) {
+        this.state.marker.setMap(this.props.map);
+      } else {
+        this.createGMMarker();
+      }
     }
   }
 
@@ -48,6 +61,7 @@ export default class Marker extends React.Component<IMarkerProps, IMarkerState> 
     if (this.state.marker) {
       this.state.marker.setMap(null);
     }
+    this.props.onMarkerDeleted && this.props.onMarkerDeleted();
   }
 
   render() {
