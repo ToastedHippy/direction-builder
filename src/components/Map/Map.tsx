@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { } from "@types/googlemaps";
-import { IPoint } from "../../models/Point";
+import { IPoint, PointId } from "../../models/Point";
 import Marker from "../../components/Marker/Marker";
 import Line from "../../components/Line/Line";
 import "./Map.scss";
@@ -11,7 +11,7 @@ export interface IMapProps {
 }
 
 interface IWaypoint {
-  pointId: number;
+  pointId: PointId;
   coordinate: google.maps.LatLng;
 }
 
@@ -71,6 +71,24 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     this.setState({ waypoints });
   }
 
+  orderWaypoints(waypoints: IWaypoint[], pointsOrder: PointId[]) {
+    const orderedWaypoints = waypoints.slice();
+
+    if (orderedWaypoints.length === pointsOrder.length) {
+      pointsOrder.forEach((pointId, index) => {
+        if (orderedWaypoints[index].pointId === pointId) {
+          return;
+        }
+        const oldIdex = orderedWaypoints.findIndex(p => p.pointId === pointId);
+        const newIndex = index;
+        const [removed] = orderedWaypoints.splice(oldIdex, 1);
+        orderedWaypoints.splice(newIndex, 0, removed);
+      });
+    }
+
+    return orderedWaypoints;
+  }
+
   componentDidMount() {
     if (!("google" in window)) {
       document.body.appendChild(this.createGMScript());
@@ -80,9 +98,12 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   }
 
   render() {
-    const markers = this.props.points.map(p => {
+    const { points } = this.props;
+    const { waypoints, map } = this.state;
+
+    const markers = points.map(p => {
       return <Marker key={p.id}
-        map={this.state.map}
+        map={map}
         name={p.name}
         onMarkerCreated={(coordinate: google.maps.LatLng) => this.addWaypoint(p.id, coordinate)}
         onMarkerMoved={(coordinate: google.maps.LatLng) => this.changeWaypointCoordinate(p.id, coordinate)}
@@ -93,8 +114,11 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       <div className="map">
         <div ref="gmap" className="gmap"></div>
         {markers}
-        <Line map={this.state.map}
-          coordinates={this.state.waypoints.map(wp => wp.coordinate)} />
+        <Line map={map}
+          coordinates={
+            this.orderWaypoints(waypoints, points.map(p => p.id))
+              .map(wp => wp.coordinate)
+          } />
       </div>
     );
   }

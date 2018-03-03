@@ -1,5 +1,6 @@
 import * as React from "react";
 import { IPoint } from "../../models/Point";
+import "./PointComponent.scss";
 
 export interface IPointComponentProps extends IPoint {
   onPointDeleted?: (id: number) => any;

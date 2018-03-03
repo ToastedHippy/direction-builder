@@ -33,7 +33,10 @@ export default class DirectionEditor extends React.Component<{}, IDirectionEdito
             <NewPointForm onPointAdded={this.addPoint} />
           </div>
           <div className="direction-editor__points-list">
-            <PointsList points={this.state.points} onPointDeleted={(points) => this.setState({ points })} />
+            <PointsList
+              points={this.state.points}
+              onPointDeleted={(points) => this.setState({ points })}
+              onPointsReordered={(points) => this.setState({ points })} />
           </div>
         </div>
         <div className="direction-editor__map">

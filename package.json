@@ -16,11 +16,13 @@
     "@types/react-dom": "^16.0.4",
     "node-sass": "^4.7.2",
     "react": "^16.2.0",
+    "react-beautiful-dnd": "^5.0.0",
     "react-dom": "^16.2.0",
     "react-load-script": "0.0.6",
     "typescript": "^2.7.2"
   },
   "devDependencies": {
+    "@types/react-beautiful-dnd": "^4.0.0",
     "parcel-bundler": "^1.6.2",
     "parcel-plugin-typescript": "^0.6.0",
     "tslint": "^5.9.1"

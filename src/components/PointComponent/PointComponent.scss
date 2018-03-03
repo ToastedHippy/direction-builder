@@ -1,0 +1,15 @@
+.point {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid red;
+  padding: 5px
+}
+
+.point__name {
+  display: inline-block;
+  max-width: 100px;
+  margin-right: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
